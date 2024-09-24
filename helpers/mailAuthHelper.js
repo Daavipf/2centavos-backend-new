@@ -2,8 +2,8 @@ const transporter = require('./mailTransporter')
 const User = require('../models/User')
 
 module.exports = class MailAuthHelper{
-  static async sendResetPasswordMail(user_email, token){
-    const reset_link = `${process.env.FRONTEND_URL}/resetpassword/${token}`
+  static async sendResetPasswordMail(user_email, reset_token){
+    const reset_link = `${process.env.FRONTEND_URL}/redefinirsenha/${reset_token}`
 
     const message = {
       from: "davi.pferreira2705@gmail.com",

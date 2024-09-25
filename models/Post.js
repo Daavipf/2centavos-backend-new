@@ -3,7 +3,7 @@ const mongoose = require('../db/conn')
 const postSchema = new mongoose.Schema({
   text: { type: String, required: true },
   comments: Array,
-  likes: {type: Number, default: 0},
+  likes: [{type:mongoose.Schema.Types.ObjectId, ref:'User'}],
   author: Object
 }, {timestamps:true})
 

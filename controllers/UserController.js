@@ -1,4 +1,4 @@
-const tm = require('../helpers/TokenManager')
+const TokenManager = require('../helpers/TokenManager')
 const getToken = require('../helpers/getToken')
 
 module.exports = class UserController {
@@ -8,7 +8,7 @@ module.exports = class UserController {
     if(!token){
       return res.status(403).json({ message: "Acesso negado" })
     }
-    const user = await tm.getUserByToken(token, res)
+    const user = await TokenManager.getUserByToken(token, res)
     //console.log(user)
     return res.status(200).json(user)
   }

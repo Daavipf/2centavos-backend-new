@@ -1,4 +1,4 @@
-const tm = require('../helpers/TokenManager')
+const TokenManager = require('../helpers/TokenManager')
 const getToken = require('../helpers/getToken')
 const check = require('../helpers/helpers_checagem')
 const Post = require('../models/Post')
@@ -18,7 +18,7 @@ module.exports = class PostsController {
     }
 
     try{
-      const user = await tm.getUserByToken(token)
+      const user = await TokenManager.getUserByToken(token)
       //console.log(req.user)
       const post_info = {
         text: entries.text,
@@ -75,7 +75,7 @@ module.exports = class PostsController {
   static async deletePost(req, res){
     const token = req.cookies.token
     const post_id = req.params.id
-    const logged_user = tm.getUserByToken(token, res)
+    const logged_user = TokenManager.getUserByToken(token, res)
 
     try{
       const post = await Post.findById(post_id)
@@ -91,5 +91,34 @@ module.exports = class PostsController {
     catch(err){
       return res.status(500).json({message:"Erro do servidor"})
     }
+  }
+
+  static async updateLike(req,res){
+    const postId = req.params.id
+    const {liked} = req.body
+    const token = getToken(req)
+    if(!token){
+      return res.status(403).json({message:"Não autorizado"})
+    }
+    const user = await TokenManager.getUserByToken(token)
+    
+    try {
+      const post = await Post.findById(postId)
+      if (!post){
+        return res.status(404).json({message:"Post não encontrado"})
+      }
+
+      if(liked){
+        post.likes.push(user.id)
+      }else {
+        await post.likes.pull(user.id)
+      }
+  
+      await post.save()
+      return res.status(200).json({ likes: post.likes.length})
+    } catch (error) {
+      return res.status(500).json({message:error.message})
+    }
+    
   }
 }
